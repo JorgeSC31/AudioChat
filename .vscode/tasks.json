@@ -1,0 +1,21 @@
+{
+    "tasks": [
+        {
+            "label": "Make Server",
+            "command": "make",
+            "args": ["config=debug", "Server"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "label": "Make Client",
+            "command": "make",
+            "args": ["config=debug", "Client"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        }
+    ],
+    "version": "2.0.0"
+}
