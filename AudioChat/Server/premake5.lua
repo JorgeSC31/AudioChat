@@ -21,7 +21,6 @@ project "Server"
 	links
 	{
 		"unp",
-		"epoll-api",
 	}
 
 	filter "configurations:Debug"

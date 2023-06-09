@@ -14,7 +14,8 @@ project "Client"
 
 	includedirs
 	{
-		"%{IncludeDir.unp}"
+		"%{IncludeDir.unp}",
+		"%{IncludeDir.epoll_api}"
     }
 
 	links
