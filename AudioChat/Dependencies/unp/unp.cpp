@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-sockaddr_in SocketAddr(in_port_t family, short port, const char *addr) {
+sockaddr_in SocketAddr(short family, short port, const char *addr) {
     sockaddr_in sockAddr;
     memset(&sockAddr, 0, sizeof(sockAddr));
     sockAddr.sin_family = family;
@@ -14,7 +14,7 @@ sockaddr_in SocketAddr(in_port_t family, short port, const char *addr) {
     return sockAddr;
 }
 
-sockaddr_in SocketAddrAny(in_port_t family, short port) {
+sockaddr_in SocketAddrAny(short family, short port) {
     sockaddr_in sockAddr;
     memset(&sockAddr, 0, sizeof(sockAddr));
     sockAddr.sin_family = family;
@@ -42,6 +42,20 @@ void Connect(int fd, const sockaddr *addr, socklen_t len) {
 void Inet_aton(const char *addr, struct in_addr *sin_addr) {
     if (!inet_aton(addr, sin_addr)) {
         printf("ERROR Inet_aton: %s\n", strerror(errno));
+        exit(1);
+    }
+}
+
+void Bind(int socketfd, const sockaddr_in &sockAddr) {
+    if (bind(socketfd, (SA *)&sockAddr, sizeof(sockAddr)) < 0) {
+        printf("ERROR Bind: %s\n", strerror(errno));
+        exit(1);
+    }
+}
+
+void Listen(int fd, int backlog) {
+    if (listen(fd, backlog) < 0) {
+        printf("ERROR Listen: %s\n", strerror(errno));
         exit(1);
     }
 }
