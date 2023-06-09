@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+Epoll::Epoll() { epollFD = epoll_create(1); }
+
 void Epoll::add(int socket, int events) {
     sharedEvent.events = events;
     sharedEvent.data.fd = socket;
@@ -13,7 +15,7 @@ void Epoll::add(int socket, int events) {
 
 void Epoll::del(int socket) { Epoll_ctl(epollFD, EPOLL_CTL_DEL, socket, NULL); }
 
-int Epoll::wait(std::vector<epoll_event> &events, int timeout = -1) {
+int Epoll::wait(std::vector<epoll_event> &events, int timeout) {
     int n;
     if ((n = epoll_wait(epollFD, events.data(), events.size(), timeout)) < 0) {
         printf("ERROR Epoll::wait : %s\n", strerror(errno));

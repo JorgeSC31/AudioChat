@@ -8,10 +8,10 @@ class Epoll {
    public:
     Epoll();
 
-    void add(int socket, int events);
+    void add(int socket, int events = EPOLLIN);
     void del(int socket);
 
-    int wait(std::vector<epoll_event> &events, int timeout);
+    int wait(std::vector<epoll_event> &events, int timeout = -1);
 
    private:
     int epollFD;
