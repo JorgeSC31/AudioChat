@@ -1,3 +1,4 @@
+#include <epoll-api.h>
 #include <string.h>
 #include <unistd.h>
 #include <unp.h>
@@ -14,16 +15,30 @@ int main() {
     char *buffer = new char[MAXLINE];
     memcpy(buffer, "Hello from Client", strlen("Hello from Client"));
 
-    sendto(sockfd, buffer, strlen(buffer), MSG_CONFIRM, (SA *)&servAddr,
-           sizeof(servAddr));
+    Epoll epoll;
+    epoll.add(sockfd);
+    epoll.add(stdin->_fileno);
 
-    std::cout << "Hello message sent." << std::endl;
-
+    std::string msg = "";
+    std::vector<epoll_event> ev(2);
     socklen_t len;
-    int n =
-        recvfrom(sockfd, buffer, MAXLINE, MSG_WAITALL, (SA *)&servAddr, &len);
-    buffer[n] = '\0';
-    std::cout << "Server: " << buffer << std::endl;
+
+    while (msg != "exit") {
+        int nfds = epoll.wait(ev);
+        for (int i = 0; i < nfds; i++) {
+            if (ev[i].data.fd == stdin->_fileno) {
+                std::cin >> msg;
+                memcpy(buffer, msg.c_str(), sizeof(msg));
+                sendto(sockfd, buffer, strlen(buffer), MSG_CONFIRM,
+                       (SA *)&servAddr, sizeof(servAddr));
+            } else if (ev[i].data.fd == sockfd) {
+                int n = recvfrom(sockfd, buffer, MAXLINE, MSG_WAITALL,
+                                 (SA *)&servAddr, &len);
+                buffer[n] = '\0';
+                std::cout << "Server: " << buffer << std::endl;
+            }
+        }
+    }
     close(sockfd);
     return 0;
 }
