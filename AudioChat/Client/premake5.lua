@@ -9,7 +9,7 @@ project "Client"
 	files
 	{
 		"*.h",
-		"*..cpp"
+		"*.cpp"
 	}
 
 	includedirs
