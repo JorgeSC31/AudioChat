@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 
 #define SA struct sockaddr
+#define mZero(x, szx) memset(x, 0, szx)
 
 sockaddr_in SocketAddr(short family, short port, const char *addr);
 sockaddr_in SocketAddrAny(short family, short port);
