@@ -1,7 +1,8 @@
-project "Server"
-	kind "ConsoleApp"
+project "epoll-api"
+	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
+	staticruntime "off"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/obj/" .. outputdir .. "/%{prj.name}")
@@ -9,19 +10,15 @@ project "Server"
 	files
 	{
 		"*.h",
-		"*.cpp"
+		"*.cpp",
 	}
 
 	includedirs
 	{
-		"%{IncludeDir.unp}"
-    }
-    
+	}
 
 	links
 	{
-		"unp",
-		"epoll-api",
 	}
 
 	filter "configurations:Debug"

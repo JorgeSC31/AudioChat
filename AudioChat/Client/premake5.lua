@@ -19,7 +19,8 @@ project "Client"
 
 	links
 	{
-		"unp"
+		"unp",
+		"epoll-api",
 	}
 
 	filter "configurations:Debug"

@@ -12,6 +12,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 group "Dependencies"
 	include "AudioChat/Dependencies/unp"
+	include "AudioChat/Dependencies/epoll-api"
 group ""
 
 group "Core"
