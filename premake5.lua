@@ -2,7 +2,6 @@ include "Dependencies.lua"
 
 workspace "AudioChat"
     architecture "x86_64"
-    startproject "Server"
     configurations
     {
         "Debug",
