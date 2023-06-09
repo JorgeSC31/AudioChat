@@ -39,3 +39,6 @@ obj/
 # Make files
 Makefile
 *.make
+
+# IDE files
+.vscode/
