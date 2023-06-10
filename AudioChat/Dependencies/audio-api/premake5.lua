@@ -9,7 +9,7 @@ project "audio-api"
 	files
 	{
 		"*.h",
-		"*.c"
+		"*.cpp"
 	}
 
 	includedirs
