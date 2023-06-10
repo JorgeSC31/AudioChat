@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <broadcast.h>
 #include <stdio.h>
 #include <string.h>
 #include <unp.h>
@@ -22,6 +23,7 @@ int main() {
     std::cout << sizeof(buffer) << std::endl;
 
     // Server cycle
+    Broadcast broadcast;
     while (true) {
         int n = recvfrom(sockfd, buffer, MAXLINE, MSG_WAITALL, (SA*)&cliAddr,
                          &lenCliAddr);
@@ -30,7 +32,10 @@ int main() {
         printf("client IP: %s\n", cliIP);
         printf("client msg: %s\n", buffer);
 
-        sendto(sockfd, buffer, n, MSG_CONFIRM, (SA*)&cliAddr, lenCliAddr);
+        broadcast.addDest(cliAddr);
+        broadcast.sendFrom(cliAddr, sockfd, buffer, n);
+
+        // sendto(sockfd, buffer, n, MSG_CONFIRM, (SA*)&cliAddr, lenCliAddr);
     }
 
     return 0;

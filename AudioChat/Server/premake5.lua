@@ -14,13 +14,15 @@ project "Server"
 
 	includedirs
 	{
-		"%{IncludeDir.unp}"
+		"%{IncludeDir.unp}",
+		"%{IncludeDir.broadcast}",
     }
     
 
 	links
 	{
 		"unp",
+		"broadcast"
 	}
 
 	filter "configurations:Debug"
