@@ -11,7 +11,10 @@ class Broadcast {
     void sendFrom(sockaddr_in user, int socket, void* buffer, int bufferLen);
 
    private:
-    bool sockAddrComp(const sockaddr_in&, const sockaddr_in&);
     bool eqsockAddr(const sockaddr_in&, const sockaddr_in&);
-    std::set<sockaddr_in, decltype(sockAddrComp)> users;
+    struct Cmp {
+        bool operator()(const sockaddr_in&, const sockaddr_in&) const;
+    };
+
+    std::set<sockaddr_in, Cmp> users;
 };
