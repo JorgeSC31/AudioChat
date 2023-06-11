@@ -29,3 +29,9 @@ void PlaybackDevice::play(void* buffer, unsigned int buffLen) {
 }
 
 void PlaybackDevice::close() { snd_pcm_close(handle); }
+
+int PlaybackDevice::getFD(){
+    pollfd * pfds = new pollfd();
+    snd_pcm_poll_descriptors(handle, pfds, 1);
+    return pfds->fd;
+}

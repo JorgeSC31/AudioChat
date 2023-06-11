@@ -9,6 +9,7 @@ class PlaybackDevice {
                    unsigned int latency);
     void play(void* buffer, unsigned int buffLen);
     void close();
+    int getFD();
 
    private:
     snd_pcm_t* handle;
