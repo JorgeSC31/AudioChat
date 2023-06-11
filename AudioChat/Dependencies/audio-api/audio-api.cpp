@@ -26,6 +26,14 @@ void PlaybackDevice::setParams(snd_pcm_format_t format, unsigned int rate,
 
 void PlaybackDevice::play(void* buffer, unsigned int buffLen) {
     int frames = snd_pcm_writei(handle, buffer, buffLen);
+    if (frames < 0) frames = snd_pcm_recover(handle, frames, 0);
+    if (frames < 0) {
+        printf("snd_pcm_writei failed: %s\n", snd_strerror(frames));
+        return;
+    }
+    if (frames > 0 && frames < (long)sizeof(buffer))
+        printf("Short write (expected %li, wrote %li)\n", (long)sizeof(buffer),
+               frames);
 }
 
 void PlaybackDevice::close() { snd_pcm_close(handle); }
@@ -102,6 +110,11 @@ void CaptureDevice::setParams(snd_pcm_format_t format, unsigned int rate,
 
 void CaptureDevice::capture(void* buffer, unsigned int buffLen) {
     int frames = snd_pcm_readi(handle, buffer, buffLen);
+    if (frames < 0) frames = snd_pcm_recover(handle, frames, 0);
+    if (frames < 0) {
+        printf("snd_pcm_readi failed: %s\n", snd_strerror(frames));
+        return;
+    }
 }
 
 void CaptureDevice::close() { snd_pcm_close(handle); }
