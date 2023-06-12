@@ -10,13 +10,15 @@ void Audio::initialize() {
     catchError(error);
 }
 
-void Audio::openCaptureStream() {
-    error = Pa_OpenDefaultStream(&captureStream, 1, 0, paFloat32, 8'000, 256,
+void Audio::openCaptureStream(PaSampleFormat format, unsigned int rate,
+                              unsigned long frames) {
+    error = Pa_OpenDefaultStream(&captureStream, 1, 0, format, rate, frames,
                                  captureCallback, NULL);
     catchError(error);
 }
-void Audio::openPlaybackStream() {
-    error = Pa_OpenDefaultStream(&playbackStream, 0, 1, paFloat32, 8'000, 256,
+void Audio::openPlaybackStream(PaSampleFormat format, unsigned int rate,
+                               unsigned long frames) {
+    error = Pa_OpenDefaultStream(&playbackStream, 0, 1, format, rate, frames,
                                  playbackCallback, NULL);
     catchError(error);
 }

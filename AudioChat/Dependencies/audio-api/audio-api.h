@@ -6,8 +6,10 @@ class Audio {
     Audio();
     void initialize();
 
-    void openCaptureStream();
-    void openPlaybackStream();
+    void openCaptureStream(PaSampleFormat format, unsigned int rate,
+                           unsigned long frames);
+    void openPlaybackStream(PaSampleFormat format, unsigned int rate,
+                            unsigned long frames);
 
     void startCaptureStream();
     void startPlaybackStream();
