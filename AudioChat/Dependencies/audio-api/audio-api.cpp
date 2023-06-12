@@ -62,11 +62,26 @@ void Audio::stopPlaybackStream() {
 int Audio::captureCallback(const void *input, void *output,
                            unsigned long frameCount,
                            const PaStreamCallbackTimeInfo *timeInfo,
-                           PaStreamCallbackFlags statusFlags, void *userData) {}
+                           PaStreamCallbackFlags statusFlags, void *userData) {
+    DataBuffer *data = (DataBuffer *)userData;
+    float *out = &((float *)data->rawBuffer)[0];
+    float *in = (float *)input;
+
+    for (int i = 0; i < frameCount; i++) {
+        out[i] = in[i];
+    }
+}
 int Audio::playbackCallback(const void *input, void *output,
                             unsigned long frameCount,
                             const PaStreamCallbackTimeInfo *timeInfo,
                             PaStreamCallbackFlags statusFlags, void *userData) {
+    DataBuffer *data = (DataBuffer *)userData;
+    float *in = &((float *)data->rawBuffer)[0];
+    float *out = (float *)output;
+
+    for (int i = 0; i < frameCount; i++) {
+        out[i] = in[i];
+    }
 }
 
 void Audio::catchError(PaError error) {
