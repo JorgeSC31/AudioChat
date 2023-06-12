@@ -28,14 +28,14 @@ void Audio::initialize() {
 
 void Audio::openCaptureStream(PaSampleFormat format, unsigned int rate,
                               unsigned long frames) {
-    captureBuffer.initialize(format, frames);
+    captureBuffer.initialize(sizeof(float), frames);
     error = Pa_OpenDefaultStream(&captureStream, 1, 0, format, rate, frames,
                                  captureCallback, &captureBuffer);
     catchError(error);
 }
 void Audio::openPlaybackStream(PaSampleFormat format, unsigned int rate,
                                unsigned long frames) {
-    playbackBuffer.initialize(format, frames);
+    playbackBuffer.initialize(sizeof(float), frames);
     error = Pa_OpenDefaultStream(&playbackStream, 0, 1, format, rate, frames,
                                  playbackCallback, &playbackBuffer);
     catchError(error);
@@ -67,9 +67,10 @@ int Audio::captureCallback(const void *input, void *output,
     float *out = &((float *)data->rawBuffer)[0];
     float *in = (float *)input;
 
-    for (int i = 0; i < frameCount; i++) {
+    for (unsigned long i = 0; i < frameCount; i++) {
         out[i] = in[i];
     }
+    return 0;
 }
 int Audio::playbackCallback(const void *input, void *output,
                             unsigned long frameCount,
@@ -82,6 +83,7 @@ int Audio::playbackCallback(const void *input, void *output,
     for (int i = 0; i < frameCount; i++) {
         out[i] = in[i];
     }
+    return 0;
 }
 
 void Audio::catchError(PaError error) {

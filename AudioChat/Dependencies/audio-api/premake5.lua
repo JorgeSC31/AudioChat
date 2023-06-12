@@ -1,6 +1,6 @@
 project "audio-api"
 	kind "ConsoleApp"
-	language "C"
+	language "C++"
 	-- cppdialect "C++17"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
@@ -9,7 +9,8 @@ project "audio-api"
 	files
 	{
 		"*.h",
-		"*.c"
+		"*.c",
+		"*.cpp",
 	}
 
 	includedirs

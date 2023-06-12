@@ -1,5 +1,6 @@
 #pragma once
 #include <portaudio.h>
+#include <stdlib.h>
 
 class DataBuffer {
    public:
