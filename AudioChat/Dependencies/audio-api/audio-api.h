@@ -1,6 +1,17 @@
 #pragma once
 #include <portaudio.h>
 
+class DataBuffer {
+   public:
+    DataBuffer();
+    void initialize(size_t formatSize, unsigned int bufferSize);
+
+    unsigned int bufferSize;
+    unsigned int readIndex;
+    unsigned int writeIndex;
+    void *rawBuffer;
+};
+
 class Audio {
    public:
     Audio();
@@ -20,6 +31,9 @@ class Audio {
    private:
     PaStream *playbackStream;
     PaStream *captureStream;
+
+    DataBuffer playbackBuffer;
+    DataBuffer captureBuffer;
 
     static int captureCallback(const void *input, void *output,
                                unsigned long frameCount,
