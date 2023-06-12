@@ -5,7 +5,7 @@
 
 // using namespace std;
 
-#define SAMPLE_RATE (44100)
+#define SAMPLE_RATE (8000)
 #define BUFFER_SIZE (256)
 #define NUM_SECONDS 2
 
@@ -18,10 +18,12 @@ typedef struct {
 
 float gBuffer[BUFFER_SIZE * 4];
 
+int cntPlaybackCallback = 0;
 static int PlaybackCallback(const void *inputBuffer, const void *outputBuffer,
                             unsigned long framesPerBuffer,
                             const PaStreamCallbackTimeInfo *timeInfo,
                             PaStreamCallbackFlags statusFlags, void *userData) {
+    cntPlaybackCallback++;
     paTestData *data = (paTestData *)userData;
     float *in = &data->recordedSample[data->outputIndex];
     float *out = (float *)outputBuffer;
@@ -32,10 +34,13 @@ static int PlaybackCallback(const void *inputBuffer, const void *outputBuffer,
     return 0;
 }
 
+int cntCaptureCallback = 0;
 static int CaptureCallback(const void *inputBuffer, const void *outputBuffer,
                            unsigned long framesPerBuffer,
                            const PaStreamCallbackTimeInfo *timeInfo,
                            PaStreamCallbackFlags statusFlags, void *userData) {
+    cntCaptureCallback++;
+
     paTestData *data = (paTestData *)userData;
     float *out = &data->recordedSample[data->recordedIndex];
     float *in = (float *)inputBuffer;
@@ -118,11 +123,16 @@ int main() {
     if (err != paNoError) printf("PortAudio error: %s\n", Pa_GetErrorText(err));
 
     paTestData data;
-    data.maxIndex = 10024 * BUFFER_SIZE;
+    data.maxIndex = 1024 * BUFFER_SIZE;
+    data.maxIndex = 1e6;
     data.recordedSample = (float *)malloc(data.maxIndex * sizeof(float));
 
     record(5, &data);
     play(4, &data);
+    printf("Record Index: %d\tIterations: %d\n", data.recordedIndex,
+           cntCaptureCallback);
+    printf("Playback Index: %d\tIterations: %d\n", data.outputIndex,
+           cntPlaybackCallback);
 
     err = Pa_Terminate();
     if (err != paNoError) printf("PortAudio error: %s\n", Pa_GetErrorText(err));
