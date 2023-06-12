@@ -15,13 +15,15 @@ project "Client"
 	includedirs
 	{
 		"%{IncludeDir.unp}",
-		"%{IncludeDir.epoll_api}"
+		"%{IncludeDir.epoll_api}",
+		"%{IncludeDir.audio_api}",
     }
 
 	links
 	{
 		"unp",
 		"epoll-api",
+		"audio-api"
 	}
 
 	filter "configurations:Debug"

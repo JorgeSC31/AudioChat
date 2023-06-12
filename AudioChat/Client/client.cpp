@@ -1,3 +1,4 @@
+#include <audio-api.h>
 #include <epoll-api.h>
 #include <string.h>
 #include <unistd.h>
