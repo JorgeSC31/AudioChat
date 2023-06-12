@@ -1,4 +1,5 @@
 #pragma once
+#include <portaudio.h>
 
 class Audio {
    public:
@@ -15,6 +16,20 @@ class Audio {
     void stopPlaybackStream();
 
    private:
-    static int captureCallback();
-    static int playbackCallback();
+    PaStream *playbackStream;
+    PaStream *captureStream;
+
+    static int captureCallback(const void *input, void *output,
+                               unsigned long frameCount,
+                               const PaStreamCallbackTimeInfo *timeInfo,
+                               PaStreamCallbackFlags statusFlags,
+                               void *userData);
+    static int playbackCallback(const void *input, void *output,
+                                unsigned long frameCount,
+                                const PaStreamCallbackTimeInfo *timeInfo,
+                                PaStreamCallbackFlags statusFlags,
+                                void *userData);
+
+    PaError error;
+    void catchError(PaError);
 };
