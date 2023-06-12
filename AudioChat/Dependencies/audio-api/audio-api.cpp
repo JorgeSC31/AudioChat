@@ -3,7 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Audio::Audio() {}
+Audio::Audio() {
+    playbackStream = NULL;
+    captureStream = NULL;
+    error = paNoError;
+}
 
 void Audio::initialize() {
     error = Pa_Initialize();
