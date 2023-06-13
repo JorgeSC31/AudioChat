@@ -10,9 +10,16 @@ DataBuffer::DataBuffer() {
     writeIndex = 0;
 }
 
-void DataBuffer::initialize(size_t formatSize, unsigned int bufferSize) {
+void DataBuffer::initialize(size_t formatSize, unsigned int bufferSize,
+                            short port) {
     this->bufferSize = bufferSize;
     rawBuffer = malloc(formatSize * bufferSize);
+    if (port != -1) {
+        // Create socket
+        socketFD = Socket(AF_INET, SOCK_DGRAM, 0);
+        sockAddr = SocketAddr(AF_INET, port, "127.0.0.1");
+        Bind(socketFD, sockAddr);
+    }
 }
 
 Audio::Audio() {
@@ -27,15 +34,15 @@ void Audio::initialize() {
 }
 
 void Audio::openCaptureStream(PaSampleFormat format, unsigned int rate,
-                              unsigned long frames) {
-    captureBuffer.initialize(sizeof(float), frames);
+                              unsigned long frames, short port) {
+    captureBuffer.initialize(sizeof(float), frames, port);
     error = Pa_OpenDefaultStream(&captureStream, 1, 0, format, rate, frames,
                                  captureCallback, &captureBuffer);
     catchError(error);
 }
 void Audio::openPlaybackStream(PaSampleFormat format, unsigned int rate,
                                unsigned long frames) {
-    playbackBuffer.initialize(sizeof(float), frames);
+    playbackBuffer.initialize(sizeof(float), frames, -1);
     error = Pa_OpenDefaultStream(&playbackStream, 0, 1, format, rate, frames,
                                  playbackCallback, &playbackBuffer);
     catchError(error);
@@ -70,6 +77,8 @@ int Audio::captureCallback(const void *input, void *output,
     for (unsigned long i = 0; i < frameCount; i++) {
         out[i] = in[i];
     }
+    sendto(data->socketFD, in, 1, 0, (SA *)&data->sockAddr,
+           sizeof(data->sockAddr));
     return 0;
 }
 int Audio::playbackCallback(const void *input, void *output,
@@ -91,3 +100,5 @@ void Audio::catchError(PaError error) {
         printf("PortAudio error: %s\n", Pa_GetErrorText(error));
     }
 }
+
+int Audio::getCaptureFD() { return captureBuffer.socketFD; }

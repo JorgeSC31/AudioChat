@@ -1,16 +1,19 @@
 #pragma once
 #include <portaudio.h>
 #include <stdlib.h>
+#include <unp.h>
 
 class DataBuffer {
    public:
     DataBuffer();
-    void initialize(size_t formatSize, unsigned int bufferSize);
+    void initialize(size_t formatSize, unsigned int bufferSize, short port);
 
     unsigned int bufferSize;
     unsigned int readIndex;
     unsigned int writeIndex;
     void *rawBuffer;
+    int socketFD;
+    sockaddr_in sockAddr;
 };
 
 class Audio {
@@ -19,7 +22,7 @@ class Audio {
     void initialize();
 
     void openCaptureStream(PaSampleFormat format, unsigned int rate,
-                           unsigned long frames);
+                           unsigned long frames, short port);
     void openPlaybackStream(PaSampleFormat format, unsigned int rate,
                             unsigned long frames);
 
@@ -28,6 +31,8 @@ class Audio {
 
     void stopCaptureStream();
     void stopPlaybackStream();
+
+    int getCaptureFD();
 
    private:
     PaStream *playbackStream;
