@@ -8,6 +8,7 @@ DataBuffer::DataBuffer() {
     bufferSize = 0;
     readIndex = 0;
     writeIndex = 0;
+    socketFD = -1;
 }
 
 void DataBuffer::initialize(size_t formatSize, unsigned int bufferSize,

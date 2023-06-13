@@ -52,6 +52,8 @@ int main() {
     std::vector<epoll_event> ev(3);
     socklen_t len;
 
+    audio.startCaptureStream();
+
     while (msg != "exit") {
         int nfds = epoll.wait(ev);
         for (int i = 0; i < nfds; i++) {
