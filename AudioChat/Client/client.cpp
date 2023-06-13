@@ -21,9 +21,9 @@ int main() {
 
     Audio audio;
     audio.initialize();
-    audio.openCaptureStream(paFloat32, RATE, FRAMES_PER_SECOND,
+    audio.openCaptureStream(PA_FORMAT, RATE, FRAMES_PER_SECOND,
                             7300);  // PORT FOR CAPTURE STREAM
-    audio.openPlaybackStream(paFloat32, RATE, FRAMES_PER_SECOND);
+    audio.openPlaybackStream(PA_FORMAT, RATE, FRAMES_PER_SECOND);
 
     std::vector<epoll_event> ev(2);
     Epoll epoll;

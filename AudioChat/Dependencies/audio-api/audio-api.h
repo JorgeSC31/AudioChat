@@ -1,4 +1,5 @@
 #pragma once
+#include <config.h>
 #include <portaudio.h>
 #include <stdlib.h>
 #include <unp.h>

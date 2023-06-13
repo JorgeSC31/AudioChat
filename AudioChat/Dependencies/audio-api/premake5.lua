@@ -14,13 +14,15 @@ project "audio-api"
 
 	includedirs
 	{
-		"%{IncludeDir.unp}"
+		"%{IncludeDir.unp}",
+		"%{IncludeDir.config}"
     }
 
 	links
 	{
 		"portaudio",
-		"unp"
+		"unp",
+		"config"
 	}
 
 	filter "configurations:Debug"
