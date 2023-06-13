@@ -14,8 +14,9 @@ DataBuffer::DataBuffer() {
 
 void DataBuffer::initialize(size_t formatSize, unsigned int bufferSize,
                             short port) {
-    this->bufferSize = bufferSize;
-    rawBuffer = malloc(formatSize * bufferSize);
+    this->bufferSize = formatSize * bufferSize;
+    rawBuffer = malloc(this->bufferSize);
+    memset(rawBuffer, 0, this->bufferSize);
     if (port != -1) {
         // Create socket
         socketFD = Socket(AF_INET, SOCK_DGRAM, 0);
@@ -75,12 +76,6 @@ int Audio::captureCallback(const void *input, void *output,
     DataBuffer *data = (DataBuffer *)userData;
     memcpy(data->rawBuffer, input, sizeof(float) * frameCount);
 
-    // float *out = &((float *)data->rawBuffer)[0];
-    // float *in = (float *)input;
-
-    // for (unsigned long i = 0; i < frameCount; i++) {
-    //     out[i] = in[i];
-    // }
     sendto(data->socketFD, input, 1, 0, (SA *)&data->sockAddr,
            sizeof(data->sockAddr));
     return 0;
@@ -92,13 +87,6 @@ int Audio::playbackCallback(const void *input, void *output,
     DataBuffer *data = (DataBuffer *)userData;
     memcpy(output, data->rawBuffer, sizeof(float) * frameCount);
     memset(data->rawBuffer, 0, sizeof(float) * frameCount);
-
-    // float *in = &((float *)data->rawBuffer)[0];
-    // float *out = (float *)output;
-
-    // for (int i = 0; i < frameCount; i++) {
-    //     out[i] = in[i];
-    // }
     return 0;
 }
 
