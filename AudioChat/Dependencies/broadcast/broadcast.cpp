@@ -7,7 +7,7 @@ void Broadcast::addDest(sockaddr_in user) { users.insert(user); }
 void Broadcast::sendFrom(sockaddr_in user, int socket, void* buffer,
                          int bufferLen) {
     for (auto addr : users) {
-        // if (eqsockAddr(addr, user)) continue;
+        if (eqsockAddr(addr, user)) continue;
         sendto(socket, buffer, bufferLen, MSG_CONFIRM, (struct sockaddr*)&addr,
                sizeof(addr));
     }
