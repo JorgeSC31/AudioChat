@@ -17,6 +17,7 @@ project "Client"
 		"%{IncludeDir.unp}",
 		"%{IncludeDir.epoll_api}",
 		"%{IncludeDir.audio_api}",
+		"%{IncludeDir.config}"
     }
 
 	links
@@ -24,7 +25,8 @@ project "Client"
 		"unp",
 		"epoll-api",
 		"audio-api",
-		"portaudio"
+		"portaudio",
+		"config"
 	}
 
 	filter "configurations:Debug"
