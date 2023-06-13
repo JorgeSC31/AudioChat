@@ -12,9 +12,8 @@ DataBuffer::DataBuffer() {
     socketFD = -1;
 }
 
-void DataBuffer::initialize(size_t formatSize, unsigned int bufferSize,
-                            short port) {
-    this->bufferSize = formatSize * bufferSize;
+void DataBuffer::initialize(short port) {
+    this->bufferSize = BUFFER_SIZE;
     rawBuffer = malloc(this->bufferSize);
     memset(rawBuffer, 0, this->bufferSize);
     if (port != -1) {
@@ -38,14 +37,14 @@ void Audio::initialize() {
 
 void Audio::openCaptureStream(PaSampleFormat format, unsigned int rate,
                               unsigned long frames, short port) {
-    captureBuffer.initialize(sizeof(float), frames, port);
+    captureBuffer.initialize(port);
     error = Pa_OpenDefaultStream(&captureStream, 1, 0, format, rate, frames,
                                  captureCallback, &captureBuffer);
     catchError(error);
 }
 void Audio::openPlaybackStream(PaSampleFormat format, unsigned int rate,
                                unsigned long frames) {
-    playbackBuffer.initialize(sizeof(float), frames, -1);
+    playbackBuffer.initialize(-1);
     error = Pa_OpenDefaultStream(&playbackStream, 0, 1, format, rate, frames,
                                  playbackCallback, &playbackBuffer);
     catchError(error);
@@ -74,7 +73,7 @@ int Audio::captureCallback(const void *input, void *output,
                            const PaStreamCallbackTimeInfo *timeInfo,
                            PaStreamCallbackFlags statusFlags, void *userData) {
     DataBuffer *data = (DataBuffer *)userData;
-    memcpy(data->rawBuffer, input, sizeof(float) * frameCount);
+    memcpy(data->rawBuffer, input, BUFFER_SIZE);
 
     sendto(data->socketFD, input, 1, 0, (SA *)&data->sockAddr,
            sizeof(data->sockAddr));
@@ -85,8 +84,8 @@ int Audio::playbackCallback(const void *input, void *output,
                             const PaStreamCallbackTimeInfo *timeInfo,
                             PaStreamCallbackFlags statusFlags, void *userData) {
     DataBuffer *data = (DataBuffer *)userData;
-    memcpy(output, data->rawBuffer, sizeof(float) * frameCount);
-    memset(data->rawBuffer, 0, sizeof(float) * frameCount);
+    memcpy(output, data->rawBuffer, BUFFER_SIZE);
+    memset(data->rawBuffer, 0, BUFFER_SIZE);
     return 0;
 }
 

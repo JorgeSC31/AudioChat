@@ -7,7 +7,7 @@
 class DataBuffer {
    public:
     DataBuffer();
-    void initialize(size_t formatSize, unsigned int bufferSize, short port);
+    void initialize(short port);
 
     unsigned int bufferSize;
     unsigned int readIndex;
