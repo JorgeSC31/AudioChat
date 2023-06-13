@@ -13,8 +13,8 @@ class DataBuffer {
 
     unsigned int bufferSize;
     unsigned int slots;
-    unsigned int readSlot;
-    unsigned int writeSlot;
+    int readSlot;
+    int writeSlot;
     void *rawBuffer;
     int socketFD;
     sockaddr_in sockAddr;

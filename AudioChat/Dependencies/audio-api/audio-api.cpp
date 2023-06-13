@@ -28,16 +28,12 @@ void DataBuffer::initialize(short port) {
 
 void DataBuffer::push(const void *buffer) {
     if (writeSlot == -1) writeSlot = 0;
-    FORMAT *formatBuffer = (FORMAT *)rawBuffer;
-    formatBuffer = &formatBuffer[writeSlot * BUFFER_SIZE];
-    memcpy(formatBuffer, buffer, BUFFER_SIZE);
+    memcpy(rawBuffer + writeSlot * BUFFER_SIZE, buffer, BUFFER_SIZE);
     writeSlot = (writeSlot + 1) % slots;
 }
 
 void *DataBuffer::pop() {
-    FORMAT *formatBuffer = (FORMAT *)rawBuffer;
-    formatBuffer = &formatBuffer[readSlot * BUFFER_SIZE];
-    void *buffer = formatBuffer;
+    void *buffer = rawBuffer + readSlot * BUFFER_SIZE;
     if (writeSlot != -1) {
         readSlot = (readSlot + 1) % slots;
     }
