@@ -39,11 +39,11 @@ int main() {
             if (ev[i].data.fd == sockfd) {
                 n = recvfrom(sockfd, buffer, BUFFER_SIZE, MSG_WAITALL,
                              (SA *)&cliAddr, &len);
-                memcpy(audio.playbackBuffer.rawBuffer, buffer, n);
+                if (n > 0) audio.playbackBuffer.push(buffer);
             } else if (ev[i].data.fd == audio.getCaptureFD()) {
                 n = recvfrom(ev[i].data.fd, buffer, BUFFER_SIZE, MSG_WAITALL,
                              (SA *)&cliAddr, &len);
-                n = sendto(sockfd, audio.captureBuffer.rawBuffer, BUFFER_SIZE,
+                n = sendto(sockfd, audio.captureBuffer.pop(), BUFFER_SIZE,
                            MSG_CONFIRM, (SA *)&servAddr, sizeof(servAddr));
             }
         }

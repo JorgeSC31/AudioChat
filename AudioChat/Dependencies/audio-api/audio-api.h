@@ -8,10 +8,13 @@ class DataBuffer {
    public:
     DataBuffer();
     void initialize(short port);
+    void push(const void *buffer);
+    void *pop();
 
     unsigned int bufferSize;
-    unsigned int readIndex;
-    unsigned int writeIndex;
+    unsigned int slots;
+    unsigned int readSlot;
+    unsigned int writeSlot;
     void *rawBuffer;
     int socketFD;
     sockaddr_in sockAddr;
