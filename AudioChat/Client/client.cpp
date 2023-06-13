@@ -1,4 +1,5 @@
 #include <audio-api.h>
+#include <config.h>
 #include <epoll-api.h>
 #include <string.h>
 #include <unistd.h>
@@ -6,12 +7,9 @@
 
 #include <iostream>
 
-#define PORT 8080
-#define MAXLINE (256 * sizeof(float))
-
 int main() {
     int sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
-    sockaddr_in servAddr = SocketAddr(AF_INET, PORT, "127.0.0.1");
+    sockaddr_in servAddr = SocketAddr(AF_INET, SERVER_PORT, "127.0.0.1");
 
     // Client address, needed for reply
     socklen_t len;
@@ -19,15 +17,15 @@ int main() {
     socklen_t lenCliAddr;
     mZero(&cliAddr, sizeof(cliAddr));
 
-    void *buffer = malloc(MAXLINE);
+    void *buffer = malloc(BUFFER_SIZE);
 
     Audio audio;
     audio.initialize();
-    audio.openCaptureStream(paFloat32, 8'000, 256, 7300);
+    audio.openCaptureStream(PA_FORMAT, RATE, FRAMES_PER_SECOND,
+                            7300);  // PORT FOR CAPTURE STREAM
+    audio.openPlaybackStream(PA_FORMAT, RATE, FRAMES_PER_SECOND);
 
-    audio.openPlaybackStream(paFloat32, 8'000, 256);
-
-    std::vector<epoll_event> ev(3);
+    std::vector<epoll_event> ev(2);
     Epoll epoll;
     epoll.add(audio.getCaptureFD());
     epoll.add(sockfd);
@@ -37,15 +35,15 @@ int main() {
 
     while (1) {
         int nfds = epoll.wait(ev);
-        for (int i = 0; i < nfds; i++) {
+        for (int i = 0, n; i < nfds; i++) {
             if (ev[i].data.fd == sockfd) {
-                int n = recvfrom(sockfd, buffer, MAXLINE, MSG_WAITALL,
-                                 (SA *)&cliAddr, &len);
-                memcpy(audio.playbackBuffer.rawBuffer, buffer, n);
+                n = recvfrom(sockfd, buffer, BUFFER_SIZE, MSG_WAITALL,
+                             (SA *)&cliAddr, &len);
+                if (n > 0) audio.playbackBuffer.push(buffer);
             } else if (ev[i].data.fd == audio.getCaptureFD()) {
-                int n = recvfrom(ev[i].data.fd, buffer, MAXLINE, MSG_WAITALL,
-                                 (SA *)&cliAddr, &len);
-                n = sendto(sockfd, audio.captureBuffer.rawBuffer, MAXLINE,
+                n = recvfrom(ev[i].data.fd, buffer, BUFFER_SIZE, MSG_WAITALL,
+                             (SA *)&cliAddr, &len);
+                n = sendto(sockfd, audio.captureBuffer.pop(), BUFFER_SIZE,
                            MSG_CONFIRM, (SA *)&servAddr, sizeof(servAddr));
             }
         }

@@ -1,4 +1,5 @@
 #pragma once
+#include <config.h>
 #include <portaudio.h>
 #include <stdlib.h>
 #include <unp.h>
@@ -6,11 +7,14 @@
 class DataBuffer {
    public:
     DataBuffer();
-    void initialize(size_t formatSize, unsigned int bufferSize, short port);
+    void initialize(short port);
+    void push(const void *buffer);
+    void *pop();
 
     unsigned int bufferSize;
-    unsigned int readIndex;
-    unsigned int writeIndex;
+    unsigned int slots;
+    int readSlot;
+    int writeSlot;
     void *rawBuffer;
     int socketFD;
     sockaddr_in sockAddr;

@@ -16,13 +16,15 @@ project "Server"
 	{
 		"%{IncludeDir.unp}",
 		"%{IncludeDir.broadcast}",
+		"%{IncludeDir.config}"
     }
     
 
 	links
 	{
 		"unp",
-		"broadcast"
+		"broadcast",
+		"config"
 	}
 
 	filter "configurations:Debug"

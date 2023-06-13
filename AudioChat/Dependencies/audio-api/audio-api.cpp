@@ -7,14 +7,15 @@
 DataBuffer::DataBuffer() {
     rawBuffer = NULL;
     bufferSize = 0;
-    readIndex = 0;
-    writeIndex = 0;
+    readSlot = 0;
+    writeSlot = -1;
+    slots = 0;
     socketFD = -1;
 }
 
-void DataBuffer::initialize(size_t formatSize, unsigned int bufferSize,
-                            short port) {
-    this->bufferSize = formatSize * bufferSize;
+void DataBuffer::initialize(short port) {
+    slots = 8;
+    this->bufferSize = BUFFER_SIZE * slots;
     rawBuffer = malloc(this->bufferSize);
     memset(rawBuffer, 0, this->bufferSize);
     if (port != -1) {
@@ -23,6 +24,20 @@ void DataBuffer::initialize(size_t formatSize, unsigned int bufferSize,
         sockAddr = SocketAddr(AF_INET, port, "127.0.0.1");
         Bind(socketFD, sockAddr);
     }
+}
+
+void DataBuffer::push(const void *buffer) {
+    if (writeSlot == -1) writeSlot = 0;
+    memcpy(rawBuffer + writeSlot * BUFFER_SIZE, buffer, BUFFER_SIZE);
+    writeSlot = (writeSlot + 1) % slots;
+}
+
+void *DataBuffer::pop() {
+    void *buffer = rawBuffer + readSlot * BUFFER_SIZE;
+    if (writeSlot != -1) {
+        readSlot = (readSlot + 1) % slots;
+    }
+    return buffer;
 }
 
 Audio::Audio() {
@@ -38,14 +53,14 @@ void Audio::initialize() {
 
 void Audio::openCaptureStream(PaSampleFormat format, unsigned int rate,
                               unsigned long frames, short port) {
-    captureBuffer.initialize(sizeof(float), frames, port);
+    captureBuffer.initialize(port);
     error = Pa_OpenDefaultStream(&captureStream, 1, 0, format, rate, frames,
                                  captureCallback, &captureBuffer);
     catchError(error);
 }
 void Audio::openPlaybackStream(PaSampleFormat format, unsigned int rate,
                                unsigned long frames) {
-    playbackBuffer.initialize(sizeof(float), frames, -1);
+    playbackBuffer.initialize(-1);
     error = Pa_OpenDefaultStream(&playbackStream, 0, 1, format, rate, frames,
                                  playbackCallback, &playbackBuffer);
     catchError(error);
@@ -74,7 +89,7 @@ int Audio::captureCallback(const void *input, void *output,
                            const PaStreamCallbackTimeInfo *timeInfo,
                            PaStreamCallbackFlags statusFlags, void *userData) {
     DataBuffer *data = (DataBuffer *)userData;
-    memcpy(data->rawBuffer, input, sizeof(float) * frameCount);
+    data->push(input);
 
     sendto(data->socketFD, input, 1, 0, (SA *)&data->sockAddr,
            sizeof(data->sockAddr));
@@ -85,8 +100,9 @@ int Audio::playbackCallback(const void *input, void *output,
                             const PaStreamCallbackTimeInfo *timeInfo,
                             PaStreamCallbackFlags statusFlags, void *userData) {
     DataBuffer *data = (DataBuffer *)userData;
-    memcpy(output, data->rawBuffer, sizeof(float) * frameCount);
-    memset(data->rawBuffer, 0, sizeof(float) * frameCount);
+    void *buffer = data->pop();
+    memcpy(output, buffer, BUFFER_SIZE);
+    memset(buffer, 0, BUFFER_SIZE);
     return 0;
 }
 
