@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 DataBuffer::DataBuffer() {
     rawBuffer = NULL;
@@ -72,13 +73,15 @@ int Audio::captureCallback(const void *input, void *output,
                            const PaStreamCallbackTimeInfo *timeInfo,
                            PaStreamCallbackFlags statusFlags, void *userData) {
     DataBuffer *data = (DataBuffer *)userData;
-    float *out = &((float *)data->rawBuffer)[0];
-    float *in = (float *)input;
+    memcpy(data->rawBuffer, input, sizeof(float) * frameCount);
 
-    for (unsigned long i = 0; i < frameCount; i++) {
-        out[i] = in[i];
-    }
-    sendto(data->socketFD, in, 1, 0, (SA *)&data->sockAddr,
+    // float *out = &((float *)data->rawBuffer)[0];
+    // float *in = (float *)input;
+
+    // for (unsigned long i = 0; i < frameCount; i++) {
+    //     out[i] = in[i];
+    // }
+    sendto(data->socketFD, input, 1, 0, (SA *)&data->sockAddr,
            sizeof(data->sockAddr));
     return 0;
 }
@@ -87,12 +90,15 @@ int Audio::playbackCallback(const void *input, void *output,
                             const PaStreamCallbackTimeInfo *timeInfo,
                             PaStreamCallbackFlags statusFlags, void *userData) {
     DataBuffer *data = (DataBuffer *)userData;
-    float *in = &((float *)data->rawBuffer)[0];
-    float *out = (float *)output;
+    memcpy(output, data->rawBuffer, sizeof(float) * frameCount);
+    memset(data->rawBuffer, 0, sizeof(float) * frameCount);
 
-    for (int i = 0; i < frameCount; i++) {
-        out[i] = in[i];
-    }
+    // float *in = &((float *)data->rawBuffer)[0];
+    // float *out = (float *)output;
+
+    // for (int i = 0; i < frameCount; i++) {
+    //     out[i] = in[i];
+    // }
     return 0;
 }
 

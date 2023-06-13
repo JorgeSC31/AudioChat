@@ -7,7 +7,7 @@
 #include <iostream>
 
 #define PORT 8080
-#define MAXLINE 100
+#define MAXLINE (256 * sizeof(float))
 
 void test() {
     int sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
@@ -57,20 +57,24 @@ int main() {
     while (msg != "exit") {
         int nfds = epoll.wait(ev);
         for (int i = 0; i < nfds; i++) {
-            if (ev[i].data.fd == stdin->_fileno) {
-                std::cin >> msg;
-                memcpy(buffer, msg.c_str(), sizeof(msg));
-                sendto(sockfd, buffer, strlen(buffer), MSG_CONFIRM,
-                       (SA *)&servAddr, sizeof(servAddr));
-            } else if (ev[i].data.fd == sockfd) {
+            // if (ev[i].data.fd == stdin->_fileno) {
+            //     std::cin >> msg;
+            //     memcpy(buffer, msg.c_str(), sizeof(msg));
+            //     sendto(sockfd, buffer, strlen(buffer), MSG_CONFIRM,
+            //            (SA *)&servAddr, sizeof(servAddr));
+            // } else
+            if (ev[i].data.fd == sockfd) {
                 int n = recvfrom(sockfd, buffer, MAXLINE, MSG_WAITALL,
                                  (SA *)&servAddr, &len);
-                buffer[n] = '\0';
-                std::cout << "Server: " << buffer << std::endl;
+                memcpy(audio.playbackBuffer.rawBuffer, buffer, n);
+                // buffer[n] = '\0';
+                std::cout << "Server mensaje recibido: " << std::endl;
             } else if (ev[i].data.fd == audio.getCaptureFD()) {
                 int n = recvfrom(ev[i].data.fd, buffer, MAXLINE, MSG_WAITALL,
                                  (SA *)&servAddr, &len);
                 std::cout << "Capturando audio\n";
+                sendto(sockfd, audio.captureBuffer.rawBuffer, MAXLINE,
+                       MSG_CONFIRM, (SA *)&servAddr, sizeof(servAddr));
             }
         }
     }

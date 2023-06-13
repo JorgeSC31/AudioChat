@@ -34,12 +34,12 @@ class Audio {
 
     int getCaptureFD();
 
+    DataBuffer playbackBuffer;
+    DataBuffer captureBuffer;
+
    private:
     PaStream *playbackStream;
     PaStream *captureStream;
-
-    DataBuffer playbackBuffer;
-    DataBuffer captureBuffer;
 
     static int captureCallback(const void *input, void *output,
                                unsigned long frameCount,
