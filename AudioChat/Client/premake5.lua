@@ -23,7 +23,8 @@ project "Client"
 	{
 		"unp",
 		"epoll-api",
-		"audio-api"
+		"audio-api",
+		"portaudio"
 	}
 
 	filter "configurations:Debug"
