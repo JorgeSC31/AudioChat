@@ -1,5 +1,5 @@
-project "Client"
-	kind "ConsoleApp"
+project "audio-api"
+	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
 
@@ -9,22 +9,18 @@ project "Client"
 	files
 	{
 		"*.h",
-		"*.cpp"
+		"*.cpp",
 	}
 
 	includedirs
 	{
-		"%{IncludeDir.unp}",
-		"%{IncludeDir.epoll_api}",
-		"%{IncludeDir.audio_api}",
+		"%{IncludeDir.unp}"
     }
 
 	links
 	{
-		"unp",
-		"epoll-api",
-		"audio-api",
-		"portaudio"
+		"portaudio",
+		"unp"
 	}
 
 	filter "configurations:Debug"

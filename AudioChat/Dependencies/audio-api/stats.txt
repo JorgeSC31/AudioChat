@@ -1,0 +1,14 @@
+#define SAMPLE_RATE (44100)
+#define BUFFER_SIZE (256)
+Record Index: 220672    Iterations: 862
+Playback Index: 179200  Iterations: 700
+
+#define SAMPLE_RATE (44100)
+#define BUFFER_SIZE (1024)
+Record Index: 221184    Iterations: 216
+Playback Index: 180224  Iterations: 176
+
+#define SAMPLE_RATE (8000)
+#define BUFFER_SIZE (256)
+Record Index: 39936     Iterations: 156
+Playback Index: 33024   Iterations: 129

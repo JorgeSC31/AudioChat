@@ -5,7 +5,7 @@
 #include <unp.h>
 
 #define PORT 8080
-#define MAXLINE 100
+#define MAXLINE (256 * sizeof(float))
 
 int main() {
     // Createing server socket
@@ -30,7 +30,7 @@ int main() {
         buffer[n] = '\0';
         char* cliIP = inet_ntoa(cliAddr.sin_addr);
         printf("client IP: %s\n", cliIP);
-        printf("client msg: %s\n", buffer);
+        // printf("client msg: %s\n", buffer);
 
         broadcast.addDest(cliAddr);
         broadcast.sendFrom(cliAddr, sockfd, buffer, n);

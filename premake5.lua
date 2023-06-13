@@ -14,6 +14,7 @@ group "Dependencies"
 	include "AudioChat/Dependencies/unp"
 	include "AudioChat/Dependencies/epoll-api"
 	include "AudioChat/Dependencies/broadcast"
+	include "AudioChat/Dependencies/audio-api"
 group ""
 
 group "Core"
