@@ -57,7 +57,7 @@ Follow these steps to get started with the Audio Chat Over Internet project:
 5. Run the client:
 
    - Start the client application on each client machine by running the generated client executable.
-    ```bash
+     ```bash
      ./bin/Release-linux-x86-64/Client/Client
      ```
    - Provide the necessary connection details (such as server IP address and port) to connect the client to the server.
